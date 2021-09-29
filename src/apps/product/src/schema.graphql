@@ -1,0 +1,19 @@
+input AppInfo {
+  token: String!
+  url: String!
+  platform: String!
+}
+
+extend type Query {
+  getProductsByCategory(
+    appInfo: AppInfo!
+    searchValue: String
+    currentPage: Int!
+    categoryId: Int!
+  ): String
+  getQuerySearchProduct(
+    appInfo: AppInfo!
+    searchValue: String
+    currentPage: Int!
+  ): String
+}

@@ -1,0 +1,66 @@
+{
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps/graphql/src",
+  "monorepo": true,
+  "root": "apps/graphql",
+  "compilerOptions": {
+    "webpack": true,
+    "tsConfigPath": "apps/graphql/tsconfig.app.json"
+  },
+  "projects": {
+    "common": {
+      "type": "library",
+      "root": "libs/common",
+      "entryFile": "index",
+      "sourceRoot": "libs/common/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/common/tsconfig.lib.json"
+      }
+    },
+    "graphql": {
+      "type": "application",
+      "root": "apps/graphql",
+      "entryFile": "main",
+      "sourceRoot": "apps/graphql/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/graphql/tsconfig.app.json"
+      }
+    },
+    "category": {
+      "type": "application",
+      "root": "apps/category",
+      "entryFile": "main",
+      "sourceRoot": "apps/category/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/category/tsconfig.app.json"
+      }
+    },
+    "coreapi": {
+      "type": "application",
+      "root": "apps/coreapi",
+      "entryFile": "main",
+      "sourceRoot": "apps/coreapi/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/coreapi/tsconfig.app.json"
+      }
+    },
+    "cashier": {
+      "type": "application",
+      "root": "apps/cashier",
+      "entryFile": "main",
+      "sourceRoot": "apps/cashier/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/cashier/tsconfig.app.json"
+      }
+    },
+    "product": {
+      "type": "application",
+      "root": "apps/product",
+      "entryFile": "main",
+      "sourceRoot": "apps/product/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/product/tsconfig.app.json"
+      }
+    }
+  }
+}

@@ -1,0 +1,153 @@
+version: "3.7"
+services:
+  node-category:
+    container_name: node-category
+    labels:
+      - "traefik.enable=true"
+      - traefik.http.routers.category.rule=Host(`nestpos.localhost`) && PathPrefix(`/category`)
+      - "traefik.http.routers.category.entrypoints=web"
+      - traefik.http.services.category.loadbalancer.server.port=3000
+      - traefik.docker.network=proxy
+    build:
+      context: ../../src
+      dockerfile: ../env/common/node/Dockerfile-category
+    volumes:
+      - ../../src/apps/category:/usr/src/app/apps/category
+      - /usr/src/app/node_modules
+    ports:
+      - 3000
+      - 9229
+    command: npm run start:dev category
+    networks:
+      - proxy
+
+  node-cashier:
+    container_name: node-cashier
+    labels:
+      - "traefik.enable=true"
+      - traefik.http.routers.cashier.rule=Host(`nestpos.localhost`) && PathPrefix(`/cashier`)
+      - "traefik.http.routers.cashier.entrypoints=web"
+      - traefik.http.services.cashier.loadbalancer.server.port=3000
+      - traefik.docker.network=proxy
+    build:
+      context: ../../src
+      dockerfile: ../env/common/node/Dockerfile-cashier
+    volumes:
+      - ../../src/apps/cashier:/usr/src/app/apps/cashier
+      - /usr/src/app/node_modules
+    ports:
+      - 3000
+      - 9229
+    command: npm run start:dev cashier
+    networks:
+      - proxy
+
+  node-product:
+    container_name: node-product
+    labels:
+      - "traefik.enable=true"
+      - traefik.http.routers.product.rule=Host(`nestpos.localhost`) && PathPrefix(`/product`)
+      - "traefik.http.routers.product.entrypoints=web"
+      - traefik.http.services.product.loadbalancer.server.port=3000
+      - traefik.docker.network=proxy
+    build:
+      context: ../../src
+      dockerfile: ../env/common/node/Dockerfile-product
+    volumes:
+      - ../../src/apps/product:/usr/src/app/apps/product
+      - /usr/src/app/node_modules
+    ports:
+      - 3000
+      - 9229
+    command: npm run start:dev product
+    networks:
+      - proxy
+
+  node-graphql:
+    container_name: node-graphql
+    labels:
+      - "traefik.enable=true"
+      - traefik.http.routers.graphql.rule=Host(`nestpos.localhost`) && PathPrefix(`/graphql`)
+      - "traefik.http.routers.graphql.entrypoints=web"
+      - traefik.http.services.graphql.loadbalancer.server.port=3000
+      - traefik.docker.network=proxy
+      
+    build:
+      context: ../../src
+      dockerfile: ../env/common/node/Dockerfile-graphql
+    volumes:
+      - ../../src/apps/graphql:/usr/src/app/apps/graphql
+      - /usr/src/app/node_modules
+    depends_on:
+      - node-cashier
+      - node-category
+      - node-core-api
+      - node-product
+    ports:
+      - 3000
+      - 9229
+    command: sh -c './scripts/wait-for.sh --timeout=540 node-core-api:3000 && npm run start:dev graphql'
+    networks:
+      - proxy
+
+  node-core-api:
+    container_name: node-core-api
+    stdin_open: true
+    labels:
+      - "traefik.enable=true"
+      - traefik.http.routers.coreapi.rule=Host(`nestpos.localhost`) && PathPrefix(`/coreapi`)
+      - "traefik.http.routers.coreapi.entrypoints=web"
+      - traefik.http.services.coreapi.loadbalancer.server.port=3000
+      - traefik.docker.network=proxy
+    build:
+      context: ../../src
+      dockerfile: ../env/common/node/Dockerfile-coreapi
+    depends_on:
+      - mongo
+    volumes:
+      - ../../src/apps/coreapi:/usr/src/app/apps/coreapi
+      - /usr/src/app/node_modules
+    ports:
+      - 3000
+      - 9229
+    command: npm run start:dev coreapi
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+    networks:
+      - proxy
+
+  mongo:
+    image: mongo:latest
+    restart: always
+    ports:
+      - 27019:27017
+    volumes:
+      - ../../data/mongodb:/data/db
+    environment:
+      - MONGODB_DATABASE="pos-gateway"
+    networks:
+      - proxy
+
+#  rabbit:
+#    image: rabbitmq:management
+#    labels:
+#      - traefik.http.routers.rabbit.rule=Host(`rabbit.nestpos.localhost`)
+#      - traefik.http.services.rabbit.loadbalancer.server.port=15672
+#      - traefik.docker.network=proxy
+#    ports:
+#      - 15672
+#      - 5672
+#    tty: true
+#    environment:
+#      RABBITMQ_DEFAULT_USER: category
+#      RABBITMQ_DEFAULT_PASS: password
+#    networks:
+#      - proxy
+
+networks:
+  proxy:
+    external:
+      name: proxy
+  internal:
+    driver: bridge

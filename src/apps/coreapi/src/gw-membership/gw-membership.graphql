@@ -1,0 +1,14 @@
+type GwMembership @key(fields: "_id")  {
+    _id: String!
+    name: String!
+    price: String!
+    position: String
+    is_featured: String
+    level: String
+    created_at: String
+}
+
+type Query {
+    getMembership(_id: String): GwMembership
+    getAllMembership(is_featured: String): [GwMembership]
+}

@@ -1,0 +1,1 @@
+export const MAGENTO2 = 'magento2';

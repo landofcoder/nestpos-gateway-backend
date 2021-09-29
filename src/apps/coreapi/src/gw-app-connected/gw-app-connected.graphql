@@ -1,0 +1,40 @@
+type GwAppConnected @key(fields: "_id")  {
+    _id: String!
+    token: String!
+    platform: String!
+    destination_url: String!
+    product_image_base_url: String
+    user_id: String!
+    status: String
+    name: String!
+    app_settings: String
+    created_at: String
+}
+
+type Query {
+    getApp(token: String): GwAppConnected
+    getAllApp(userId: String!): [GwAppConnected]
+    reportAllApp: String
+    signIn(email: String!, password: String!): String
+}
+
+type Mutation {
+    signUp(
+        firstName: String!, 
+        lastName: String!, 
+        email: String!, 
+        password: String!
+    ): Boolean
+    createApp(
+        userId: String!, 
+        name: String!, 
+        siteUrl: String!, 
+        imageUrl: String!
+    ): Boolean
+    updateApp(
+        appId: String!, 
+        name: String!, 
+        siteUrl: String!, 
+        imageUrl: String!
+    ): Boolean
+}

@@ -1,0 +1,16 @@
+FROM node:12.13-alpine As development
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+RUN rm -rf /usr/src/app/apps/cashier
+RUN rm -rf /usr/src/app/apps/coreapi
+RUN rm -rf /usr/src/app/apps/graphql
+RUN rm -rf /usr/src/app/apps/category
+
+CMD ["npm", "run" ,"start:dev", "product"]

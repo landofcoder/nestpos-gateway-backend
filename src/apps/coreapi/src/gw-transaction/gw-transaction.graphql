@@ -1,0 +1,25 @@
+type GwTransaction @key(fields: "_id")  {
+    _id: String!
+    name: String!
+    membership_id: String!
+    total: String
+    paid_price: String
+    status: String
+    payment_name: String
+    transaction_details: String
+    user_id: String
+    created_at: String
+    updated_at: String
+    paid_at: String
+}
+
+type Query {
+    getTransactions(userId: String!, membership_id: String, status: String): [GwTransaction]
+}
+
+type Mutation {
+    subscribeMembership(
+        membershipId: String!,
+        userId: String!
+    ): Boolean
+}
