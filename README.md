@@ -2,7 +2,7 @@
 
 ```bash
 # development
-$ cd env
+$ cd env/development
 $ docker-compose up -d
 $ docker-compose run node npm install
 ```
